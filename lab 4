@@ -1,245 +1,85 @@
 using System;
-using System.IO;
-namespace Lab_4_2
+
+namespace Lab_4
 {
     class Program
     {
-        public static void Redact(Storage[] storage, int index)
-        {
-            Console.Clear();
-            Storage edit = storage[index];
-            bool end = false;
-            if (edit != null)
-                while (!end)
-                {
-                    Console.WriteLine("Введiть поле для реадагування згiдно зразкiв на латиницi\n(i = інвентарний номер, n = назва товару, w = ваша товару, p = ціна товару, c = кількість товару):");
-                    string field = Console.ReadLine().ToLower();
-
-                    switch (field)
-                    {
-                        case "i":
-                            Console.WriteLine("Введiть новий інвентарний номер:");
-                            edit.Invert_num = int.Parse(Console.ReadLine());
-                            break;
-                        case "n":
-                            Console.WriteLine("Введiть нову назву товару:");
-                            edit.Item_name = Console.ReadLine();
-                            break;
-                        case "w":
-                            Console.WriteLine("Введiть нову вагу товару:");
-                            edit.Item_weight =int.Parse(Console.ReadLine());
-                            break;
-                        case "p":
-                            Console.WriteLine("Ведiть нову ціну товару:");
-                            edit.Item_prise = int.Parse(Console.ReadLine());
-                            break;
-                        case "c":
-                            Console.WriteLine("Ведiть нову кількість товару:");
-                            edit.Item_count = int.Parse(Console.ReadLine());
-                            break;
-                        default:
-                            Console.WriteLine("Невiрно введена назва поля.Спробуйте знову");
-                            break;
-                    }
-
-                    Console.WriteLine("Ви хочете реадагувати ще якесь поле?(yes/no)");
-                    string answer = Console.ReadLine().ToLower();
-
-                    if (answer == "no")
-                    {
-                        end = true;
-                    }
-                }
-            else
-                Console.WriteLine("Неможливе реадагування");
-        }
-        public static void Sort(Storage[] storage, double[] liste, int count)
-        {
-            Console.Clear();
-            Array.Sort(liste);
-            Console.WriteLine("Інформацiя про склад:");
-            foreach (double nums in liste)
-            {
-                foreach (Storage list in storage)
-                {
-                    if (list != null)
-                        if (nums == list.Item_weight)
-                            Console.WriteLine("Інвентарний номер: " + list.Invert_num + "\nНазва товару: " + list.Item_name + "\nВага товару: " + list.Item_weight + 
-                                " кг. \nЦіна товару: " + list.Item_prise + " грн. \nКількість товару: " + list.Item_count);
-                }
-            }
-        }
-        public static void Display(Storage[] book)
-        {
-            int j = 0;
-            Console.Clear();
-            Console.WriteLine("Інформацiя про склад:");
-
-            foreach (Storage list in book)
-            {
-                if (list != null)
-                {
-                    Console.WriteLine(j + ".Інвентарний номер:" + list.Invert_num + ", Назва товару: " + list.Item_name + ", Вага товару:" + list.Item_weight +
-                                " кг. , Ціна товару: " + list.Item_prise + " грн. , Кількість товарів: " + list.Item_count);
-                    j++;
-                }
-            }
-        }
-        static public void Writer(Storage[] storage, double[] Wheightes, int i)
-        {
-            Console.Clear();
-            while (true)
-            {
-                Console.Write("Введiть данi про склад товарів (Для виходу введiть '0') \nВведiть інвентарний номер(5 цифр) :");
-                int invent_num = int.Parse(Console.ReadLine());
-                if (invent_num.ToString().Contains('0'))
-                {
-                    break;
-                }
-                Console.Write("Назву товару: ");
-                string item_name = Console.ReadLine();
-
-                Console.Write("Вагу товару(в кілограмах): ");
-                double item_wheight = double.Parse(Console.ReadLine());
-
-                Console.Write("Ціну товару(в гривнях): ");
-                double item_prise = double.Parse(Console.ReadLine());
-
-                Console.Write("Кількість товару: ");
-                int item_count = int.Parse(Console.ReadLine());
-
-                Wheightes[i] = item_wheight;
-                storage[i] = new Storage(invent_num, item_name, item_wheight, item_prise, item_count);
-                i++;
-                Console.Clear();
-            }
-        }
-        static public void seach(Storage[] storage, string seach)
-        {
-            int zero = 0;
-            Console.Clear();
-            Console.WriteLine("Найденi результати за пошуком:");
-            foreach (Storage list in storage)
-            {
-                if (list != null)
-                    if (seach.ToLower() == list.Item_name.ToLower())
-                    {
-                        Console.WriteLine("Інвентарний номер:" + list.Invert_num + ", Назва товару: " + list.Item_name + ", Вага товару:" + list.Item_weight +
-                                " кг. , Ціна товару: " + list.Item_prise + " грн. , Кількість товару: " + list.Item_count);
-                        zero++;
-                    }
-            }
-            if (zero == 0)
-                Console.WriteLine("Нiчого не знайдено за запитом " + seach);
-        }
-        static void Delete(ref Storage[] storage, int index)
-        {
-            Console.Clear();
-            if (index >= 0 && index < storage.Length)
-            {
-                Storage[] newStore = new Storage[storage.Length - 1];
-                int newIndex = 0;
-
-                for (int i = 0; i < storage.Length; i++)
-                {
-                    if (i != index)
-                    {
-                        newStore[newIndex] = storage[i];
-                        newIndex++;
-                    }
-                }
-
-                storage = newStore;
-                Console.WriteLine("Запис успiшно удалений.");
-            }
-            else
-            {
-                Console.WriteLine("Невірний індекс записi.");
-            }
-        }
         static void Main(string[] args)
         {
+            Console.OutputEncoding = System.Text.Encoding.Unicode;
+            Console.InputEncoding = System.Text.Encoding.Unicode;
+            Metereology[] statistic = new Metereology[20];
             int i = 0;
-            Storage[] Storagee = new Storage[15];
-            double[] Wheightes = new double[15];
-
-            if (File.Exists("data.txt"))
-            using (StreamReader sr = new StreamReader("data.txt"))
+            int[] pressures = new int[20];
+            while (true)
             {
-                string line;
-                int ia = 0;
-
-                while ((line = sr.ReadLine()) != null)
+                try
                 {
-                    string[] data = line.Split(';');
-                    Storagee[ia] = new Storage(int.Parse(data[0]), data[1], double.Parse(data[2]), double.Parse(data[3]), int.Parse(data[4]));
-                    Wheightes[ia] = double.Parse(data[3]);
-                    ia++;
-                    i = ia;
-                }
-            }
-            else
-                File.Create("data.txt").Close();
-            Display(Storagee);
-            bool end = false;
-            while (!end)
-            {
-                Console.WriteLine("Виберiть дiю яку ви хочете виконати (введеням латинської букви)\nn = Додавання записiв\nr = Реадагуання записiв\nd = Видалення записiв\na = Вивести iнформацiю про записи\ns = Пошук товару по назві товару\nc = Вивести вiдсортованi записи\nq = Вихід");
-                char field = char.Parse(Console.ReadLine().ToLower());
+                    Console.Write("Введiть данi про погоду (Для виходу введiть число 0) \nВедiть число(день в місяці): ");
 
-                switch (field)
-                {
-                    case 'n':
-                        Writer(Storagee, Wheightes, i);
-                        break;
-                    case 'r':
-                        Console.Write("Введiть номер поля для реадагування:");
-                        int index = int.Parse(Console.ReadLine());
-                        Redact(Storagee, index + 1);
-                        break;
-                    case 'd':
-                        Console.Write("Введіть номер записі, яку треба удалити: ");
-                        int deleteIndex;
-                        if (int.TryParse(Console.ReadLine(), out deleteIndex))
-                        {
-                            Delete(ref Storagee, deleteIndex);
-                        }
-                        else
-                        {
-                            Console.WriteLine("Невірний формат вводу.");
-                        }
-                        break;
-                    case 'a':
-                        Display(Storagee);
-                        break;
-                    case 's':
-                        Console.Write("Введiть iмя для пошуку:");
-                        string seachi = Console.ReadLine();
-                        seach(Storagee, seachi);
-                        break;
-                    case 'c':
-                        Sort(Storagee, Wheightes, i);
-                        break;
-                    case 'q':
-                        end = true;
-                        break;
 
-                    default:
-                        Console.WriteLine("Невiрно введена команда");
-                        break;
-                }
-            }
-            using (StreamWriter sw = new StreamWriter("data.txt"))
-            {
-                foreach (Storage phone in Storagee)
-                {
-                    if (phone != null)
+                    int day = int.Parse(Console.ReadLine());
+                    if (day == 0)
                     {
-                        sw.WriteLine(phone.Invert_num + ";" + phone.Item_name + ";" + phone.Item_weight + ";" + phone.Item_prise + ";" + phone.Item_count);
+                        break;
                     }
+                    Console.Write("Введіть місяць в числовому форматі: ");
+                    int mouth = int.Parse(Console.ReadLine());
+
+                    Console.Write("Введіть температуру: ");
+                    int temp = int.Parse(Console.ReadLine());
+
+                    Console.Write("Введіть атмосферний тиск: ");
+                    int pressure = int.Parse(Console.ReadLine());
+                    pressures[i] = pressure;
+                    statistic[i] = new Metereology(day, mouth, temp, pressure);
+                    i++;
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("Введено невiрний формат данних");
+                    return;
+                }
+                }
+            Array.Sort(pressures);
+            Console.Clear();
+            Console.WriteLine("Информацiя про метеорологічні дані:");
+            Console.WriteLine("_________________________________________________________________________________");
+            Console.WriteLine("|\tДата\t\t|\tТемпература\t|\tАртеріальний тиск\t|");
+            Console.WriteLine("_________________________________________________________________________________");
+            foreach (int check in pressures)
+            {
+                foreach (Metereology info in statistic)
+                {
+                    if (info != null)
+                        if (check == info.Atmospheric_pressure)
+                        {
+                            
+                            Console.WriteLine("|\t{0}\t|\t{1}\t\t|\t{2}\t\t\t|", info.getDate, info.Temperature, info.Atmospheric_pressure);
+                            Console.WriteLine("_________________________________________________________________________________");
+                        }
+                }
+            }
+            Console.WriteLine("Информацiя два дні з найбільшим перепадом тиску:");
+            Console.WriteLine("_________________________________________________________________________________");
+            Console.WriteLine("|\tДата\t\t|\tТемпература\t|\tАртеріальний тиск\t|");
+            Console.WriteLine("_________________________________________________________________________________");
+            foreach (int check in pressures)
+            {
+                foreach (Metereology info in statistic)
+                {
+                    if (info != null)
+                        if (check == info.Atmospheric_pressure)
+                            if(info.maxCheck())
+                            {
+
+                            Console.WriteLine("|\t{0}\t|\t{1}\t\t|\t{2}\t\t\t|", info.getDate, info.Temperature, info.Atmospheric_pressure);
+                            Console.WriteLine("_________________________________________________________________________________");
+                            }
                 }
             }
             Console.ReadKey();
         }
     }
 }
+
